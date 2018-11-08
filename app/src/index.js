@@ -6,6 +6,7 @@ import * as serviceWorker from './serviceWorker';
 import { BrowserRouter } from "react-router-dom";
 import { Route } from 'react-router-dom';
 import FlowPage from './components/FlowPage';
+import StartPage from './components/StartPage';
 
 ReactDOM.render(
   <BrowserRouter>
@@ -13,6 +14,7 @@ ReactDOM.render(
       <Route path="/" component={App} />
       <Route path="/flows" component={FlowPage} />
       <Route path="/policies" component={FlowPage} />
+      <Route exact path="/" component={StartPage} />
     </div>
   </BrowserRouter>
   , document.getElementById('root')
