@@ -2,19 +2,19 @@ import React, { Component } from 'react';
 import PageWrapper from './PageWrapper';
 import Button from '@material-ui/core/Button';
 import { Link } from 'react-router-dom';
-import ManagementComponent from './ManagementComponent';
 
 class StartPage extends Component{
 
   start = () => {
-    //ManagementComponent.addLog("Starting");
+
     console.log("Starting");
+    this.props.logs.push((new Date()).getTime() +": Starting");
   }
 
   render(){
     return(
       <PageWrapper>
-        <Link to="/flows"><Button variant="contained">Start</Button></Link>
+        <Link to="/flows"><Button variant="contained" onClick={this.start}>Start</Button></Link>
       </PageWrapper>
     )
   }

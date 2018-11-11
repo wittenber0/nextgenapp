@@ -8,13 +8,15 @@ import { Route } from 'react-router-dom';
 import FlowPage from './components/FlowPage';
 import StartPage from './components/StartPage';
 
+let logs=[];
+
 ReactDOM.render(
   <BrowserRouter>
     <div>
-      <Route path="/" component={App} />
-      <Route path="/flows" component={FlowPage} />
+      <Route path="/" component={()=>{return(<App logs={logs} />)}} />
+      <Route path="/flows" component={()=>{return(<FlowPage logs={logs}></FlowPage>)}} />
       <Route path="/policies" component={FlowPage} />
-      <Route exact path="/" component={StartPage} />
+      <Route exact path="/" component={()=>{return(<StartPage logs={logs}></StartPage>)}} />
     </div>
   </BrowserRouter>
   , document.getElementById('root')

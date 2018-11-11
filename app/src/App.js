@@ -3,10 +3,11 @@ import './App.css';
 import NavComponent from './components/NavComponent';
 
 class App extends Component {
+
   render() {
     return (
       <div className="App">
-        <NavComponent />
+        <NavComponent logs={this.props.logs}/>
       </div>
     );
   }

@@ -30,12 +30,22 @@ class NavComponent extends Component{
     }
     this.setState({open : !this.state.open});
   }
+
+  start = () =>{
+    window.location = '/';
+    console.log("Starting");
+    this.props.logs.push("Starting : " + (new Date()).getTime());
+  }
+
   render(){
+    /*
+    <Button variant="outlined" color="secondary" className={"toggle-nav "+this.openClass} onClick={this.toggleNav}>
+      Menu
+    </Button>
+    */
     return (
       <div className="nav-component">
-        <Button variant="outlined" color="secondary" className={"toggle-nav "+this.openClass} onClick={this.toggleNav}>
-          Menu
-        </Button>
+        <Button variant="outlined" color="secondary" className={"toggle-nav "+this.openClass} onClick={this.start}>Home</Button>
         <h2 className="page-title">Next Gen Firewall Study</h2>
         <div className={"navbar "+this.openClass}>
           <MenuComponent toggleMethod={this.toggleNav}/>

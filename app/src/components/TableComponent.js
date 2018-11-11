@@ -36,17 +36,48 @@ const styles = theme => ({
 
 class TableComponent extends Component{
 
-  blockFlow = (id) => {
-    console.log("block " + id);
+  refreshButtons = () =>{
+    let buttons = document.getElementsByClassName("option-button");
+
+    for(let i=0; i<buttons.length; i++){
+      this.setUnblocked(buttons[i]);
+    }
+  }
+
+  blockFlow = (id, e) => {
+    if(e.target.nodeName === "SPAN"){
+      e.target = e.target.parentElement;
+    }
+
+    if(e.target.firstChild.innerHTML === "Block"){
+      this.setBlocked(e.target);
+      console.log("block " + id);
+      this.props.logs.push((new Date()).getTime()+": Blocked "+id);
+    }else{
+      this.setUnblocked(e.target);
+      console.log("unblock " + id);
+      this.props.logs.push((new Date()).getTime()+": Unblocked "+id);
+    }
+  }
+
+  setBlocked = (tar) => {
+    tar.firstChild.innerHTML = "Blocked";
+    tar.className = "MuiButtonBase-root-29 MuiButton-root-3 MuiButton-outlined-11 MuiButton-outlinedSecondary-13 option-button";
+  }
+
+  setUnblocked = (tar) =>{
+    tar.firstChild.innerHTML = "Block";
+    tar.className = "MuiButtonBase-root-29 MuiButton-root-3 MuiButton-outlined-11 option-button";
   }
 
   insertBlockButton = (id)=>{
     if(this.props.options===true){
-      return(<CustomTableCell><Button onClick={()=>{this.blockFlow(id)}}>Block</Button></CustomTableCell>)
+      return(<CustomTableCell><Button className="option-button" variant="outlined" onClick={(e)=>{this.blockFlow(id, e)}}>Block</Button></CustomTableCell>)
     }
   }
 
   render(){
+    this.refreshButtons();
     return(
       <Paper>
       <Table>
