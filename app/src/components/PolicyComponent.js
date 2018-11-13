@@ -3,6 +3,7 @@ import TextField from '@material-ui/core/TextField';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
+import Paper from '@material-ui/core/Paper';
 
 
 class PolicyComponent extends React.Component{
@@ -24,23 +25,27 @@ class PolicyComponent extends React.Component{
   render(){
     return(
     <div className="policy-card">
-      <Card>
-        <CardContent>
-          <p>Please describe policies you would make given the data in the box below</p>
-          <TextField
-          id="outlined-multiline-flexible"
-          value={this.state.policies}
-          onChange={this.handleChange('policies')}
-          label="Policies"
-          multiline
-          fullWidth
-          margin="normal"
-          variant="outlined"
-          />
-          <Button variant="outlined" color="secondary" onClick={this.handlePolicy}>Submit Phase</Button>
-        </CardContent>
-      </Card>
-
+    <Paper>
+      <h2>Policies</h2>
+      <p>
+      Please describe policies you would make given the data in the box below.
+      Feel free to use any of the data above to generate policies.
+      </p>
+      <p>For example: "block firefox.exe" or
+      "allow TCP on port 443"
+      </p>
+      <TextField
+      id="outlined-multiline-flexible"
+      value={this.state.policies}
+      onChange={this.handleChange('policies')}
+      label="Policies"
+      multiline
+      fullWidth
+      margin="normal"
+      variant="outlined"
+      />
+      <Button variant="outlined" color="secondary" onClick={this.handlePolicy}>Next Phase</Button>
+      </Paper>
     </div>
     );
   }

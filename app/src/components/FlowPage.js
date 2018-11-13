@@ -3,11 +3,12 @@ import TableComponent from './TableComponent';
 import PageWrapper from './PageWrapper';
 import Button from '@material-ui/core/Button';
 import PolicyComponent from './PolicyComponent';
+import DownloadLink from "react-download-link";
 
-let tableRows = ["Flow Id","Time", "Host Id", "Source Ip", "Destination Ip", "Source Host", "Destination Host", "Source Port", "Destination Port", "Protocol", "Flags", "Options"];
-let tableData = [[1,"2018-02-19 11:27:09", 4, "192.168.1.2", "192.168.1.1", "None", "None", 59197, 137, "UDP", "None"],[2,"2018-02-20 11:27:09", 5, "192.168.1.6", "192.168.1.1", "None", "None", 80, 80, "TCP", "None"]];
+let tableRows = ["Flow Id","Time", "Host Id", "Source Ip", "Destination Ip", "Source Host", "Destination Host", "Source Port", "Destination Port", "Protocol", "Flags", "Path", "Options"];
+let tableData = [[1,"2018-02-19 11:27:09", 4, "192.168.1.2", "192.168.1.1", "None", "None", 59197, 137, "UDP", "None", "None"],[2,"2018-02-20 11:27:09", 5, "192.168.1.6", "192.168.1.1", "None", "None", 80, 80, "TCP", "microsoftword.exe", "None"]];
 
-class FlowPage extends Component{
+class FlowPage extends React.Component{
 
   constructor(props){
     super(props);
@@ -42,7 +43,6 @@ class FlowPage extends Component{
         <div className="page-contents">
           <div className="page-sub-title-div">
             <h2 className="page-sub-title">Flow Data Phase {this.state.phase}</h2>
-            <Button variant="outlined" color="secondary" onClick={this.nextPhase}>Next Phase</Button>
           </div>
           <TableComponent rows={this.state.rows} data={this.state.data} logs={this.props.logs} options={this.state.options}/>
           <PolicyComponent submitPolicies={this.submitPolicies}/>
@@ -56,6 +56,7 @@ class FlowPage extends Component{
           {this.props.logs.map((l, i)=>{
             return(<p key={i}>{l}</p>);
           })}
+          <DownloadLink filename="results.txt" exportFile={() => this.props.logs}>Save</DownloadLink>
         </PageWrapper>
       )
     }
