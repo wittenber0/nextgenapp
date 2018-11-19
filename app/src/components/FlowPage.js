@@ -1,18 +1,17 @@
-import React, { Component } from 'react';
+import React from 'react';
 import TableComponent from './TableComponent';
 import PageWrapper from './PageWrapper';
-import Button from '@material-ui/core/Button';
 import PolicyComponent from './PolicyComponent';
 import DownloadLink from "react-download-link";
-
-let tableRows = ["Flow Id","Time", "Host Id", "Source Ip", "Destination Ip", "Source Host", "Destination Host", "Source Port", "Destination Port", "Protocol", "Flags", "Path", "Options"];
-let tableData = [[1,"2018-02-19 11:27:09", 4, "192.168.1.2", "192.168.1.1", "None", "None", 59197, 137, "UDP", "None", "None"],[2,"2018-02-20 11:27:09", 5, "192.168.1.6", "192.168.1.1", "None", "None", 80, 80, "TCP", "microsoftword.exe", "None"]];
+import phase3table from '../Data/phase3data';
+import phase2table from '../Data/phase2data';
+import phase1table from '../Data/phase1data';
 
 class FlowPage extends React.Component{
 
   constructor(props){
     super(props);
-    this.state = {phase: 1, rows : tableRows, data : tableData, options : true, done : false};
+    this.state = {phase: 1, rows : phase3table.rows, data : phase3table.data, options : true, done : false};
   }
 
   nextPhase = () => {
@@ -20,11 +19,18 @@ class FlowPage extends React.Component{
     if(this.state.phase === 3){
       this.setState({done : true});
       return;
+    }else if(this.state.phase === 2){
+      this.setState({
+        phase : this.state.phase + 1,
+        rows : phase2table.rows,
+        data : phase2table.data
+      });
+      return;
     }
     this.setState({
       phase : this.state.phase + 1,
-      rows : ["Flow Id","Time", "Host Id", "Source Ip", "Destination Ip", "Source Host", "Destination Host", "Source Port", "Destination Port", "Protocol", "Flags", "Extra", "Options"],
-      data : [[3,"2018-07-19 11:27:09", 4, "192.168.1.8", "192.168.1.1", "None", "None", 59197, 137, "UDP", "None", "GUI Text"],[4,"2018-02-20 11:27:09", 5, "192.168.1.6", "192.168.1.1", "None", "None", 80, 80, "TCP", "None", "GUI Text"]]
+      rows : phase1table.rows,
+      data : phase1table.data
     });
 
   }
