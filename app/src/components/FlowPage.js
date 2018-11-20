@@ -49,6 +49,11 @@ class FlowPage extends React.Component{
         <div className="page-contents">
           <div className="page-sub-title-div">
             <h2 className="page-sub-title">Flow Data Phase {this.state.phase}</h2>
+            <p>
+            For each phase, inspect each flows listed below and decide whether or not each should be blocked from the network based on the information provided.
+            While inspecting each network flow, vocalize the proccess that you are going through to ultimately make your decision, and inparticular indicate Which
+            piece or pieces of data led you to your conclusions.
+            </p>
           </div>
           <TableComponent rows={this.state.rows} data={this.state.data} logs={this.props.logs} options={this.state.options}/>
           <PolicyComponent submitPolicies={this.submitPolicies}/>
