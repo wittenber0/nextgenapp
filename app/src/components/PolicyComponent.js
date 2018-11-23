@@ -26,10 +26,10 @@ class PolicyComponent extends React.Component{
     <Paper>
       <h2>Policies</h2>
       <p>
-      Please describe policies you would make given the data in the box below.
-      Feel free to use any of the data above to generate policies.
+      In the box below please describe what information from the above table most heavily influenced your decisions,
+      and write down any policies or rules that you would create from the information available to systematically block malicious traffic in the future.
       </p>
-      <p>For example: "block firefox.exe" or
+      <p>For example rules or policies could look like: "block firefox.exe" or
       "allow TCP on port 443"
       </p>
       <TextField
