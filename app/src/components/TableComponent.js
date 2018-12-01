@@ -76,6 +76,12 @@ class TableComponent extends Component{
     }
   }
 
+  insertRowHeader = (row) =>{
+    if(this.props.rowheaders){
+      return(<CustomTableCell>{this.props.rowheaders[row]}</CustomTableCell>);
+    }
+  }
+
   render(){
     this.refreshButtons();
     return(
@@ -92,8 +98,9 @@ class TableComponent extends Component{
         {this.props.data.map((r, i)=>{
           return(
             <TableRow key={i}>
-            {r.map((c, i)=>{
-              return(<CustomTableCell key={i}>{c}</CustomTableCell>)
+            {this.insertRowHeader(i)}
+            {r.map((c, i2)=>{
+              return(<CustomTableCell key={i2}>{c}</CustomTableCell>)
             })}
             {this.insertBlockButton(r[0])}
             </TableRow>

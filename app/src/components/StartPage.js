@@ -15,7 +15,7 @@ class StartPage extends Component{
     return(
       <PageWrapper>
         <p>[Experiment context and informed consent...]</p>
-        <Link to="/flows"><Button variant="contained" onClick={this.start}>Start</Button></Link>
+        <Link to="/flow0"><Button variant="contained" onClick={this.start}>Start</Button></Link>
       </PageWrapper>
     )
   }
