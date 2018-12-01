@@ -45,7 +45,8 @@ class SingleFlowComponent extends React.Component {
       this.setState({
         row: this.state.row +1,
         next: this.state.next +1,
-        reason: ""
+        reason: "",
+        blocked: false
       }, ()=>{
         this.setGUIText();
       });
