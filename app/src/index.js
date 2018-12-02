@@ -8,9 +8,10 @@ import { Route } from 'react-router-dom';
 import FlowPage from './components/FlowPage';
 import StartPage from './components/StartPage';
 import SingleFlowComponent from './components/SingleFlowComponent';
+import PhaseBreakPage from './components/PhaseBreakPage';
 
 let logs=[];
-let phaseswitch = false;
+let phaseswitch = true;
 
 ReactDOM.render(
   <BrowserRouter>
@@ -19,6 +20,8 @@ ReactDOM.render(
       <Route path="/flows" component={()=>{return(<FlowPage logs={logs}></FlowPage>)}} />
       <Route path="/policies" component={FlowPage} />
       <Route path="/flow:flowid" component={Child} />
+      <Route path="/phase2" component={()=>{return(<PhaseBreakPage logs={logs} phase={2}></PhaseBreakPage>)}} />
+      <Route path="/phase3" component={()=>{return(<PhaseBreakPage logs={logs} phase={3}></PhaseBreakPage>)}} />
       <Route exact path="/" component={()=>{return(<StartPage logs={logs}></StartPage>)}} />
     </div>
   </BrowserRouter>

@@ -15,27 +15,55 @@ class SingleFlowComponent extends React.Component {
   constructor (props){
     super(props);
     this.state = {time: "", next: this.props.rowid+1, row: this.props.rowid, blocked: false, reason: "", peace: this.props.phaseswitch, phase: 1};
-
+    if(this.props.phaseswitch){
+      if(this.props.rowid < 8){
+        this.state = {time: "", next: this.props.rowid+1, row: this.props.rowid, blocked: false, reason: "", peace: true, phase: 1};
+      }else if(this.props.rowid < 16){
+        this.state = {time: "", next: this.props.rowid+1, row: this.props.rowid, blocked: false, reason: "", peace: false, phase: 2};
+      }else{
+        this.state = {time: "", next: this.props.rowid+1, row: this.props.rowid-8, blocked: false, reason: "", peace: true, phase: 3};
+      }
+    }else{
+      if(this.state.row <8){
+        this.state = {time: "", next: this.props.rowid+1, row: this.props.rowid, blocked: false, reason: "", peace: false, phase: 1};
+      }else if(this.state.row <16){
+        this.state = {time: "", next: this.props.rowid+1, row: this.props.rowid, blocked: false, reason: "", peace: true, phase: 2};
+      }else if(this.state.row >=16){
+        this.state = {time: "", next: this.props.rowid+1, row: this.props.rowid-16, blocked: false, reason: "", peace: true, phase: 3};
+      }
+    }
   }
 
   setGUIText = () =>{
 
     if(this.props.phaseswitch){
       if(this.props.rowid < 8){
-        this.setState({peace: true});
+        this.setState({peace: true, phase: 1});
       }else if(this.props.rowid < 16){
         this.setState({peace: false, phase: 2});
       }else{
         this.setState({peace: true, phase: 3, row: this.props.rowid-8});
       }
     }else{
-      if(this.state.row <16 && this.state.row >=8){
+      if(this.state.row <8){
+        this.setState({peace: false, phase: 1});
+      }else if(this.state.row <16){
         this.setState({peace: true, phase: 2});
       }else if(this.state.row >=16){
         this.setState({peace: true, phase: 3, row: this.props.rowid-16});
       }
     }
 
+  }
+
+  generateRoute = () => {
+    if(this.props.rowid === 7){
+      return("phase2");
+    }else if(this.props.rowid === 15){
+      return("phase3");
+    }else{
+      return("/flow"+this.state.next);
+    }
   }
 
   next = () => {
@@ -72,7 +100,7 @@ class SingleFlowComponent extends React.Component {
         <div className="flow-gui-pane">
           <Divider />
           <h4>User interactions during the last 5 minutes</h4>
-          <TableComponent rowheaders={["Clicks", "Key Strokes"]} rows={["User Action", "0-5 Seconds", "5-15 Seconds", "15-60 Seconds", "1-3 Minutes", "3-5 Minutes"]} data={[JSON.parse(FlowData.data[this.state.row][10]), JSON.parse(FlowData.data[this.state.row][11])]} logs={this.props.logs} options={false}/>
+          <TableComponent rowheaders={["Clicks", "Key Strokes"]} rows={["User Action", "0-5 Seconds", "0-15 Seconds", "0-60 Seconds", "0-3 Minutes", "0-5 Minutes"]} data={[JSON.parse(FlowData.data[this.state.row][10]), JSON.parse(FlowData.data[this.state.row][11])]} logs={this.props.logs} options={false}/>
           <h4>GUI at time of network action</h4>
           <div>
           {FlowData.data[this.state.row][12].map((e, i) =>{
@@ -91,10 +119,7 @@ class SingleFlowComponent extends React.Component {
           <h2>Done</h2>
           <DownloadLink filename="results.txt" exportFile={() => JSON.stringify(this.props.logs)}>Save</DownloadLink>
         </PageWrapper>)
-    }else if(this.props.rowid> 15){
-
     }
-    console.log(this.state.row);
     return(
       <PageWrapper>
         <div className="page-contents">
@@ -138,7 +163,7 @@ class SingleFlowComponent extends React.Component {
             />
           </div>
 
-          <Link to={"/flow"+this.state.next}><Button variant="outlined" onClick={this.next}>Next</Button></Link>
+          <Link to={this.generateRoute()}><Button variant="outlined" onClick={this.next}>Next</Button></Link>
         </div>
       </PageWrapper>
     )
