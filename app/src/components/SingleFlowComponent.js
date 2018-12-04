@@ -100,7 +100,7 @@ class SingleFlowComponent extends React.Component {
         <div className="flow-gui-pane">
           <Divider />
           <h4>User interactions during the last 5 minutes</h4>
-          <TableComponent rowheaders={["Clicks", "Key Strokes"]} rows={["User Action", "0-5 Seconds", "0-15 Seconds", "0-60 Seconds", "0-3 Minutes", "0-5 Minutes"]} data={[JSON.parse(FlowData.data[this.state.row][10]), JSON.parse(FlowData.data[this.state.row][11])]} logs={this.props.logs} options={false}/>
+          <TableComponent rowheaders={["Key Strokes","Clicks"]} rows={["User Action", "0-5 Seconds", "0-15 Seconds", "0-60 Seconds", "0-3 Minutes", "0-5 Minutes"]} data={[JSON.parse(FlowData.data[this.state.row][10]), JSON.parse(FlowData.data[this.state.row][11])]} logs={this.props.logs} options={false}/>
           <h4>GUI at time of network action</h4>
           <div>
           {FlowData.data[this.state.row][12].map((e, i) =>{
