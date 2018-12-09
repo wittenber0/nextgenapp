@@ -5,33 +5,33 @@ import TableComponent from './TableComponent';
 import Button from '@material-ui/core/Button';
 import { Link } from 'react-router-dom';
 import TextField from '@material-ui/core/TextField';
-import Switch from '@material-ui/core/Switch';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormGroup from '@material-ui/core/FormGroup';
-import Divider from '@material-ui/core/Divider';
 import DownloadLink from "react-download-link";
 
 class SingleFlowComponent extends React.Component {
   constructor (props){
     super(props);
-    this.state = {time: "", next: this.props.rowid+1, row: this.props.rowid, blocked: false, reason: "", peace: this.props.phaseswitch, phase: 1};
     if(this.props.phaseswitch){
       if(this.props.rowid < 8){
-        this.state = {time: "", next: this.props.rowid+1, row: this.props.rowid, blocked: false, reason: "", peace: true, phase: 1};
+        this.state = {row: this.props.rowid, peace: true, phase: 1};
       }else if(this.props.rowid < 16){
-        this.state = {time: "", next: this.props.rowid+1, row: this.props.rowid, blocked: false, reason: "", peace: false, phase: 2};
+        this.state = {row: this.props.rowid, peace: false, phase: 2};
       }else{
-        this.state = {time: "", next: this.props.rowid+1, row: this.props.rowid-8, blocked: false, reason: "", peace: true, phase: 3};
+        this.state = {row: this.props.rowid-8, peace: true, phase: 3};
       }
     }else{
       if(this.state.row <8){
-        this.state = {time: "", next: this.props.rowid+1, row: this.props.rowid, blocked: false, reason: "", peace: false, phase: 1};
+        this.state = {row: this.props.rowid, peace: false, phase: 1};
       }else if(this.state.row <16){
-        this.state = {time: "", next: this.props.rowid+1, row: this.props.rowid, blocked: false, reason: "", peace: true, phase: 2};
+        this.state = {row: this.props.rowid, peace: true, phase: 2};
       }else if(this.state.row >=16){
-        this.state = {time: "", next: this.props.rowid+1, row: this.props.rowid-16, blocked: false, reason: "", peace: true, phase: 3};
+        this.state = {row: this.props.rowid-16, peace: true, phase: 3};
       }
     }
+    this.state.time = "";
+    this.state.next = this.props.rowid+1;
+    this.state.indicators = "";
+    this.state.blocked = false;
+    this.state.reason = "";
   }
 
   setGUIText = () =>{
@@ -69,13 +69,13 @@ class SingleFlowComponent extends React.Component {
   next = () => {
     this.setState({time: (new Date()).getTime()}, ()=>{
       this.props.logs.push(this.state);
-      console.log(this.props.logs);
       this.setState({
         row: this.state.row +1,
         next: this.state.next +1,
         reason: "",
         blocked: false
       }, ()=>{
+        this.refreshIndicators();
         this.setGUIText();
       });
     })
@@ -98,10 +98,10 @@ class SingleFlowComponent extends React.Component {
     if(this.state.peace){
       return(
         <div className="flow-gui-pane">
-          <Divider />
           <h4>User interactions during the last 5 minutes</h4>
-          <TableComponent rowheaders={["Key Strokes","Clicks"]} rows={["User Action", "0-5 Seconds", "0-15 Seconds", "0-60 Seconds", "0-3 Minutes", "0-5 Minutes"]} data={[JSON.parse(FlowData.data[this.state.row][10]), JSON.parse(FlowData.data[this.state.row][11])]} logs={this.props.logs} options={false}/>
+          <TableComponent rowheaders={["key strokes","clicks"]} rows={["User Action", "0-5 Seconds", "0-15 Seconds", "0-60 Seconds", "0-3 Minutes", "0-5 Minutes"]} saveIndicator={this.saveIndicator} data={[JSON.parse(FlowData.data[this.state.row][10]), JSON.parse(FlowData.data[this.state.row][11])]} logs={this.props.logs} options={false}/>
           <h4>GUI at time of network action</h4>
+          <Button className="indicator-button" variant="outlined" onClick={this.saveIndicator}>{"gui text"}</Button>
           <div>
           {FlowData.data[this.state.row][12].map((e, i) =>{
             return(<p key={i}>{e}</p>);
@@ -109,6 +109,40 @@ class SingleFlowComponent extends React.Component {
           </div>
         </div>
       )
+    }
+  }
+
+  saveIndicator = (event) =>{
+    let tar;
+    if(event.target.children.length){
+      tar = event.target.children[0];
+
+    }else{
+      tar = event.target;
+    }
+
+    if(tar.parentElement.className === "MuiButtonBase-root-29 MuiButton-root-3 MuiButton-outlined-11 indicator-button"){
+      this.setIndicator(tar.parentElement);
+    }else{
+      this.unsetIndicator(tar.parentElement);
+    }
+
+    this.setState({indicators: this.state.indicators + tar.innerHTML + "|"});
+  }
+
+  setIndicator = (tar) => {
+    tar.className = "MuiButtonBase-root-29 MuiButton-root-3 MuiButton-outlined-11 MuiButton-outlinedSecondary-13 indicator-button";
+  }
+
+  unsetIndicator = (tar) =>{
+    tar.className = "MuiButtonBase-root-29 MuiButton-root-3 MuiButton-outlined-11 indicator-button";
+  }
+
+  refreshIndicators = () =>{
+    let buttons = document.getElementsByClassName("indicator-button");
+
+    for(let i=0; i<buttons.length; i++){
+      this.unsetIndicator(buttons[i]);
     }
   }
 
@@ -127,30 +161,25 @@ class SingleFlowComponent extends React.Component {
             <h2 className="page-sub-title">Flow Data Phase {this.state.phase}</h2>
           </div>
           <div className="flow-detail-pane">
-          <h4>Flow Details</h4>
-            <ul>
-              <li>{FlowData.rows[0]}: {FlowData.data[this.state.row][0]}</li>
-              <li>{FlowData.rows[1]}: {FlowData.data[this.state.row][1]}</li>
-              <li>{FlowData.rows[2]}: {FlowData.data[this.state.row][2]}</li>
-              <li>{FlowData.rows[3]}: {FlowData.data[this.state.row][3]}</li>
-              <li>{FlowData.rows[4]}: {FlowData.data[this.state.row][4]}</li>
-              <li>{FlowData.rows[5]}: {FlowData.data[this.state.row][5]}</li>
-              <li>{FlowData.rows[6]}: {FlowData.data[this.state.row][6]}</li>
-              <li>{FlowData.rows[7]}: {FlowData.data[this.state.row][7]}</li>
-              <li>{FlowData.rows[8]}: {FlowData.data[this.state.row][8]}</li>
-              <li>{FlowData.rows[9]}: {FlowData.data[this.state.row][9]}</li>
-            </ul>
+            <h4>Flow Details</h4>
+            <div className="flow-info-box">
+              <div className="basic-flow-info"><Button className="indicator-button" variant="outlined" onClick={this.saveIndicator}>{FlowData.rows[1]}</Button>{FlowData.data[this.state.row][1]}</div>
+              <div className="basic-flow-info2"><Button className="indicator-button" variant="outlined" onClick={this.saveIndicator}>{FlowData.rows[2]}</Button>{FlowData.data[this.state.row][2]}</div>
+              <div className="basic-flow-info3"><Button className="indicator-button" variant="outlined" onClick={this.saveIndicator}>{FlowData.rows[3]}</Button>{FlowData.data[this.state.row][3]}</div>
+            </div>
+            <div>
+              <div className="basic-flow-info"><Button className="indicator-button" variant="outlined" onClick={this.saveIndicator}>{FlowData.rows[6]}</Button>{FlowData.data[this.state.row][6]}</div>
+              <div className="basic-flow-info2"><Button className="indicator-button" variant="outlined" onClick={this.saveIndicator}>{FlowData.rows[5]}</Button>{FlowData.data[this.state.row][5]}</div>
+              <div className="basic-flow-info3"><Button className="indicator-button" variant="outlined" onClick={this.saveIndicator}>{FlowData.rows[4]}</Button>{FlowData.data[this.state.row][4]}</div>
+            </div>
+            <div>
+              <div className="basic-flow-info"><Button className="indicator-button" variant="outlined" onClick={this.saveIndicator}>{FlowData.rows[7]}</Button>{FlowData.data[this.state.row][7]}</div>
+              <div className="basic-flow-info2"><Button className="indicator-button" variant="outlined" onClick={this.saveIndicator}>{FlowData.rows[8]}</Button>{FlowData.data[this.state.row][8]}</div>
+              <div className="basic-flow-info3"><Button className="indicator-button" variant="outlined" onClick={this.saveIndicator}>{FlowData.rows[9]}</Button>{FlowData.data[this.state.row][9]}</div>
+            </div>
           </div>
           {this.showHideGUI()}
           <div className="policy-card">
-            <FormGroup>
-              <FormControlLabel
-                control={
-                  <Switch checked={!this.state.blocked} onChange={this.handleBlockSwitch} aria-label="BlockSwitch" />
-                }
-                label={this.state.blocked ? 'Block' : 'Allow'}
-              />
-            </FormGroup>
             <TextField
             id="outlined-multiline-flexible"
             value={this.state.reason}
@@ -162,8 +191,8 @@ class SingleFlowComponent extends React.Component {
             variant="outlined"
             />
           </div>
-
-          <Link to={this.generateRoute()}><Button variant="outlined" onClick={this.next}>Next</Button></Link>
+          <Link to={this.generateRoute()}><Button className="indicator-button" variant="outlined" onClick={()=>{this.setState({blocked: true},this.next)}}>Block</Button></Link>
+          <Link to={this.generateRoute()}><Button className="indicator-button" variant="outlined" onClick={()=>{this.setState({blocked: false},this.next)}}>Allow</Button></Link>
         </div>
       </PageWrapper>
     )

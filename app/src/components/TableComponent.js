@@ -78,7 +78,7 @@ class TableComponent extends Component{
 
   insertRowHeader = (row) =>{
     if(this.props.rowheaders){
-      return(<CustomTableCell>{this.props.rowheaders[row]}</CustomTableCell>);
+      return(<CustomTableCell><Button className="indicator-button" onClick={this.props.saveIndicator} variant="outlined">{this.props.rowheaders[row]}</Button></CustomTableCell>);
     }
   }
 
