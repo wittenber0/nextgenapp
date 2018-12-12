@@ -30,7 +30,7 @@ class SingleFlowComponent extends React.Component {
     this.state.time = "";
     this.state.next = this.props.rowid+1;
     this.state.indicators = "";
-    this.state.blocked = false;
+    this.state.blocked = null;
     this.state.reason = "";
   }
 
@@ -73,19 +73,14 @@ class SingleFlowComponent extends React.Component {
         row: this.state.row +1,
         next: this.state.next +1,
         reason: "",
-        blocked: false
+        blocked: null
       }, ()=>{
-        this.refreshIndicators();
+        this.refreshIndicators("indicator-button");
+        this.refreshIndicators("blocker");
         this.setGUIText();
       });
     })
 
-  }
-
-  handleBlockSwitch = () =>{
-    this.setState({
-      blocked: !this.state.blocked
-    })
   }
 
   handleChange = name => event => {
@@ -120,29 +115,67 @@ class SingleFlowComponent extends React.Component {
     }else{
       tar = event.target;
     }
-
-    if(tar.parentElement.className === "MuiButtonBase-root-29 MuiButton-root-3 MuiButton-outlined-11 indicator-button"){
-      this.setIndicator(tar.parentElement);
-    }else{
-      this.unsetIndicator(tar.parentElement);
-    }
-
+    this.toggleButton(tar, "indicator-button");
     this.setState({indicators: this.state.indicators + tar.innerHTML + "|"});
   }
 
-  setIndicator = (tar) => {
-    tar.className = "MuiButtonBase-root-29 MuiButton-root-3 MuiButton-outlined-11 MuiButton-outlinedSecondary-13 indicator-button";
+  toggleButton = (tar, classes) =>{
+    if(tar.parentElement.className === "MuiButtonBase-root-29 MuiButton-root-3 MuiButton-outlined-11 " + classes){
+      this.setIndicator(tar.parentElement, classes);
+    }else{
+      this.unsetIndicator(tar.parentElement, classes);
+    }
   }
 
-  unsetIndicator = (tar) =>{
-    tar.className = "MuiButtonBase-root-29 MuiButton-root-3 MuiButton-outlined-11 indicator-button";
+  setIndicator = (tar, classes) => {
+    tar.className = "MuiButtonBase-root-29 MuiButton-root-3 MuiButton-outlined-11 MuiButton-outlinedSecondary-13 " + classes;
   }
 
-  refreshIndicators = () =>{
-    let buttons = document.getElementsByClassName("indicator-button");
+  unsetIndicator = (tar, classes) =>{
+    tar.className = "MuiButtonBase-root-29 MuiButton-root-3 MuiButton-outlined-11 " + classes;
+  }
+
+  refreshIndicators = (classname) =>{
+    let buttons = document.getElementsByClassName(classname);
 
     for(let i=0; i<buttons.length; i++){
-      this.unsetIndicator(buttons[i]);
+      this.unsetIndicator(buttons[i], classname);
+    }
+  }
+
+  block = (event) =>{
+    this.refreshIndicators("blocker");
+    let tar;
+    if(event.target.children.length){
+      tar = event.target.children[0];
+
+    }else{
+      tar = event.target;
+    }
+    this.toggleButton(tar, "blocker");
+    this.setState({blocked: true});
+  }
+
+  unblock = (event) =>{
+    this.refreshIndicators("blocker");
+    let tar;
+    if(event.target.children.length){
+      tar = event.target.children[0];
+
+    }else{
+      tar = event.target;
+    }
+    this.toggleButton(tar, "blocker");
+    this.setState({blocked: false});
+  }
+
+  continueGen = () =>{
+    if(this.state.blocked === null){
+      return(<p><i>block or allow to advance</i></p>);
+    }else{
+      return(
+        <Link to={this.generateRoute()}><Button variant="outlined" onClick={this.next}>Continue</Button></Link>
+      );
     }
   }
 
@@ -179,6 +212,7 @@ class SingleFlowComponent extends React.Component {
             </div>
           </div>
           {this.showHideGUI()}
+
           <div className="policy-card">
             <TextField
             id="outlined-multiline-flexible"
@@ -191,8 +225,11 @@ class SingleFlowComponent extends React.Component {
             variant="outlined"
             />
           </div>
-          <Link to={this.generateRoute()}><Button className="indicator-button" variant="outlined" onClick={()=>{this.setState({blocked: true},this.next)}}>Block</Button></Link>
-          <Link to={this.generateRoute()}><Button className="indicator-button" variant="outlined" onClick={()=>{this.setState({blocked: false},this.next)}}>Allow</Button></Link>
+          <Button className="blocker" variant="outlined" onClick={this.block}>Block</Button>
+          <Button className="blocker" variant="outlined" onClick={this.unblock}>Allow</Button>
+          <br />
+          <br />
+          {this.continueGen()}
         </div>
       </PageWrapper>
     )
