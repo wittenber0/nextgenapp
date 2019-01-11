@@ -5,12 +5,6 @@ import { Link } from 'react-router-dom';
 
 class StartPage extends Component{
 
-  start = () => {
-
-    console.log("Starting");
-    this.props.logs.push((new Date()).getTime() +": Starting");
-  }
-
   render(){
     return(
       <PageWrapper>
@@ -43,8 +37,7 @@ class StartPage extends Component{
           As a final note, the installation location and GUI text fields may be blank for some traffic representing inbound network flows,
           as opposed to outbound network flows
         </p>
-        <img className="tutorial-image" src={ require('../tutorial.PNG') } />
-        <Link to="/flow0"><Button variant="contained" onClick={this.start}>Start</Button></Link>
+        <Link to="/tutorial"><Button variant="contained" >Start Tutorial</Button></Link>
       </PageWrapper>
     )
   }

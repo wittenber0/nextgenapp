@@ -32,6 +32,7 @@ class SingleFlowComponent extends React.Component {
     this.state.indicators = "";
     this.state.blocked = null;
     this.state.reason = "";
+    this.state.tutorialStep = 1;
   }
 
   setGUIText = () =>{
@@ -54,6 +55,40 @@ class SingleFlowComponent extends React.Component {
       }
     }
 
+  }
+
+  tutorialInit = () =>{
+    if(this.props.tutorial){
+      document.getElementsByClassName('step-2')[0].classList.add('blurred');
+      document.getElementsByClassName('step-3')[0].classList.add('blurred');
+      document.getElementsByClassName('step-4')[0].classList.add('blurred');
+    }
+  }
+
+  tutorialNext = () =>{
+    if(this.state.tutorialStep<5){
+      console.log(this.state.tutorialStep);
+      if(this.state.tutorialStep === 1){
+        document.getElementsByClassName('step-1')[0].classList.add('blurred');
+        document.getElementsByClassName('step-2')[0].classList.remove('blurred');
+        this.setState({tutorialStep: 2});
+      }else if(this.state.tutorialStep === 2){
+        document.getElementsByClassName('step-2')[0].classList.add('blurred');
+        document.getElementsByClassName('step-3')[0].classList.remove('blurred');
+        this.setState({tutorialStep: 3});
+      }else if(this.state.tutorialStep === 3){
+        document.getElementsByClassName('step-3')[0].classList.add('blurred');
+        document.getElementsByClassName('step-4')[0].classList.remove('blurred');
+        this.setState({tutorialStep: 4});
+      }else if(this.state.tutorialStep === 4){
+        document.getElementsByClassName('step-1')[0].classList.remove('blurred');
+        document.getElementsByClassName('step-2')[0].classList.remove('blurred');
+        document.getElementsByClassName('step-3')[0].classList.remove('blurred');
+        document.getElementsByClassName('step-4')[0].classList.remove('blurred');
+        this.setState({tutorialStep: 5});
+      }
+
+    }
   }
 
   generateRoute = () => {
@@ -93,14 +128,19 @@ class SingleFlowComponent extends React.Component {
     if(this.state.peace){
       return(
         <div className="flow-gui-pane">
-          <h4>User interactions during the last 5 minutes</h4>
-          <TableComponent rowheaders={["key strokes","clicks"]} rows={["User Action", "0-5 Seconds", "0-15 Seconds", "0-60 Seconds", "0-3 Minutes", "0-5 Minutes"]} saveIndicator={this.saveIndicator} data={[JSON.parse(FlowData.data[this.state.row][10]), JSON.parse(FlowData.data[this.state.row][11])]} logs={this.props.logs} options={false}/>
-          <h4>GUI at time of network action</h4>
-          <Button className="indicator-button" variant="outlined" onClick={this.saveIndicator}>{"gui text"}</Button>
-          <div>
-          {FlowData.data[this.state.row][12].map((e, i) =>{
-            return(<p key={i}>{e}</p>);
-          })}
+          <div className={(this.props.tutorial && (this.state.tutorialStep !==2)) ? "step-2 blurred" : "step-2"}>
+            {this.tutorialStep2()}
+            <h4>User interactions during the last 5 minutes</h4>
+            <TableComponent rowheaders={["key strokes","clicks"]} rows={["User Action", "0-5 Seconds", "0-15 Seconds", "0-60 Seconds", "0-3 Minutes", "0-5 Minutes"]} saveIndicator={this.saveIndicator} data={[JSON.parse(FlowData.data[this.state.row][10]), JSON.parse(FlowData.data[this.state.row][11])]} logs={this.props.logs} options={false}/>
+
+          </div>
+          <div className={(this.props.tutorial && (this.state.tutorialStep !==3)) ? "step-3 blurred" : "step-3"}>
+            {this.tutorialStep3()}
+            <h4>GUI at time of network action</h4>
+            <Button className="indicator-button" variant="outlined" onClick={this.saveIndicator}>{"gui text"}</Button>
+            {FlowData.data[this.state.row][12].map((e, i) =>{
+              return(<p key={i}>{e}</p>);
+            })}
           </div>
         </div>
       )
@@ -170,13 +210,76 @@ class SingleFlowComponent extends React.Component {
   }
 
   continueGen = () =>{
-    if(this.state.blocked === null){
+    if(this.state.blocked === null || this.props.tutorial){
       return(<p><i>block or allow to advance</i></p>);
     }else{
       return(
         <Link to={this.generateRoute()}><Button variant="outlined" onClick={this.next}>Continue</Button></Link>
       );
     }
+  }
+
+  tutorialStep1 = () =>{
+    if(this.props.tutorial){
+      return(
+        <div className="tutorial-instruction">
+        <h2 className="inline">Step 1: analyze the flow details</h2>
+        <p>
+          These flow details will be present for every flow and give information regarding the origin of the flow. To indicate that a piece of information has affected your decision to block
+          or allow the packet, click on the name of the indicator.
+        </p>
+        </div>
+      )
+    }
+  }
+
+  tutorialStep2 = () =>{
+    if(this.props.tutorial){
+      return(
+        <div className="tutorial-instruction">
+        <h2 className="inline">Step 2: Analyze user mouse clicks and keystrokes</h2>
+        <p>
+          In this section below, additional user information is presented in order to help you better classify the network flow. In the chart below, see how the user interacted with the application during the moments before the packet appeared on the network.
+          Indicate if key strokes or mouse clicks influences your decision.
+        </p>
+        </div>
+      )
+    }
+  }
+
+  tutorialStep3 = () =>{
+    if(this.props.tutorial){
+      return(
+        <div className="tutorial-instruction">
+        <h2 className="inline">Step 3: Analyze the GUI Text</h2>
+        <p>
+          In this section, additional information about the graphic user interface is provided to help you better classify the network flow.
+          The GUI Text is broken up into heirarchies, identified by the '->' arrow. From within each heirarchy components of the user interface
+          can be identified by their cames, class names, and class text.
+        </p>
+        </div>
+      )
+    }
+  }
+
+  tutorialStep4 = () =>{
+
+    if(this.props.tutorial){
+      return(
+        <div className="tutorial-instruction">
+          <h2 className="inline">Step 4: Make final decision to block or allow</h2>
+          <p>
+            In this section, please write down why you ultimately chose to block or allow the flow, and select the block or allow button in order to advance to the next flow
+          </p>
+        </div>
+      )
+    }
+  }
+
+  start = () => {
+    this.tutorialNext();
+    console.log("Starting");
+    this.props.logs.push((new Date()).getTime() +": Starting");
   }
 
   render(){
@@ -191,10 +294,11 @@ class SingleFlowComponent extends React.Component {
       <PageWrapper>
         <div className="page-contents">
           <div className="page-sub-title-div">
-            <h2 className="page-sub-title">Flow Data Phase {this.state.phase}</h2>
+            {!this.props.tutorial && <h2 className="page-sub-title">Flow Data Phase {this.state.phase}</h2>}
           </div>
-          <div className="flow-detail-pane">
-            <h4>Flow Details</h4>
+          <div className={(this.props.tutorial && (this.state.tutorialStep !==1)) ? "flow-detail-pane step-1 blurred" : "flow-detail-pane step-1"}>
+            {!this.props.tutorial && <h4>Flow Details</h4>}
+            {this.tutorialStep1()}
             <div className="flow-info-box">
               <div className="basic-flow-info"><Button className="indicator-button" variant="outlined" onClick={this.saveIndicator}>{FlowData.rows[1]}</Button>{FlowData.data[this.state.row][1]}</div>
               <div className="basic-flow-info2"><Button className="indicator-button" variant="outlined" onClick={this.saveIndicator}>{FlowData.rows[2]}</Button>{FlowData.data[this.state.row][2]}</div>
@@ -212,25 +316,28 @@ class SingleFlowComponent extends React.Component {
             </div>
           </div>
           {this.showHideGUI()}
-
-          <div className="policy-card">
-            <TextField
-            id="outlined-multiline-flexible"
-            value={this.state.reason}
-            onChange={this.handleChange('reason')}
-            label="Reason for decision"
-            multiline
-            fullWidth
-            margin="normal"
-            variant="outlined"
-            />
+          <div className={(this.props.tutorial && (this.state.tutorialStep !==4)) ? "step-4 blurred" : "step-4"}>
+            <div className="policy-card">
+              {this.tutorialStep4()}
+              <TextField
+              id="outlined-multiline-flexible"
+              value={this.state.reason}
+              onChange={this.handleChange('reason')}
+              label="Reason for decision"
+              multiline
+              fullWidth
+              margin="normal"
+              variant="outlined"
+              />
+            </div>
+            <Button className="blocker" variant="outlined" onClick={this.block}>Block</Button>
+            <Button className="blocker" variant="outlined" onClick={this.unblock}>Allow</Button>
+            <br />
+            <br />
+            {this.continueGen()}
           </div>
-          <Button className="blocker" variant="outlined" onClick={this.block}>Block</Button>
-          <Button className="blocker" variant="outlined" onClick={this.unblock}>Allow</Button>
-          <br />
-          <br />
-          {this.continueGen()}
         </div>
+        {this.props.tutorial && ((this.state.tutorialStep === 4) ? <Link to="/flow0"><Button className="tutorial-next-button" variant="contained" onClick={this.start}>Start Study</Button></Link> : <Button className="tutorial-next-button" variant="contained" onClick={this.tutorialNext}>Next Step</Button>)}
       </PageWrapper>
     )
   }

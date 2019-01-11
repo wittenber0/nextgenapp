@@ -19,6 +19,7 @@ ReactDOM.render(
       <Route path="/" component={()=>{return(<App logs={logs} />)}} />
       <Route path="/flows" component={()=>{return(<FlowPage logs={logs}></FlowPage>)}} />
       <Route path="/policies" component={FlowPage} />
+      <Route path="/tutorial" component={Child2} />
       <Route path="/flow:flowid" component={Child} />
       <Route path="/phase2" component={()=>{return(<PhaseBreakPage logs={logs} phase={2}></PhaseBreakPage>)}} />
       <Route path="/phase3" component={()=>{return(<PhaseBreakPage logs={logs} phase={3}></PhaseBreakPage>)}} />
@@ -29,7 +30,11 @@ ReactDOM.render(
 );
 
 function Child({ match }) {
-  return(<SingleFlowComponent rowid={parseInt(match.params.flowid)} phaseswitch={phaseswitch} logs={logs}></SingleFlowComponent>);
+  return(<SingleFlowComponent rowid={parseInt(match.params.flowid)} phaseswitch={phaseswitch} logs={logs} tutorial={false}></SingleFlowComponent>);
+}
+
+function Child2({ match }) {
+  return(<SingleFlowComponent rowid={0} phaseswitch={phaseswitch} logs={logs} tutorial={true}></SingleFlowComponent>);
 }
 
 // If you want your app to work offline and load faster, you can change
