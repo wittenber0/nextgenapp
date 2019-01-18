@@ -295,6 +295,7 @@ class SingleFlowComponent extends React.Component {
         <div className="page-contents">
           <div className="page-sub-title-div">
             {!this.props.tutorial && <h2 className="page-sub-title">Flow Data Phase {this.state.phase}</h2>}
+            {!this.props.tutorial && <p>Remember to vocalize your thoughts and decisions</p>}
           </div>
           <div className={(this.props.tutorial && (this.state.tutorialStep !==1)) ? "flow-detail-pane step-1 blurred" : "flow-detail-pane step-1"}>
             {!this.props.tutorial && <h4>Flow Details</h4>}
