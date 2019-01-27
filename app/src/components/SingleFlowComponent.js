@@ -10,22 +10,20 @@ import DownloadLink from "react-download-link";
 class SingleFlowComponent extends React.Component {
   constructor (props){
     super(props);
-    if(this.props.phaseswitch){
-      if(this.props.rowid < 8){
+    if(this.props.rowid < 8){
+      if(this.props.phaseswitch){
         this.state = {row: this.props.rowid, peace: true, phase: 1};
-      }else if(this.props.rowid < 16){
+      }else{
+        this.state = {row: this.props.rowid, peace: true, phase: 2};
+      }
+    }else if(this.props.rowid < 16){
+      if(this.props.phaseswitch){
         this.state = {row: this.props.rowid, peace: false, phase: 2};
       }else{
-        this.state = {row: this.props.rowid-8, peace: true, phase: 3};
+        this.state = {row: this.props.rowid, peace: false, phase: 1};
       }
     }else{
-      if(this.state.row <8){
-        this.state = {row: this.props.rowid, peace: false, phase: 1};
-      }else if(this.state.row <16){
-        this.state = {row: this.props.rowid, peace: true, phase: 2};
-      }else if(this.state.row >=16){
-        this.state = {row: this.props.rowid-16, peace: true, phase: 3};
-      }
+      this.state = {row: this.props.rowid-8, peace: true, phase: 3};
     }
     this.state.time = "";
     this.state.next = this.props.rowid+1;
@@ -36,7 +34,6 @@ class SingleFlowComponent extends React.Component {
   }
 
   setGUIText = () =>{
-
     if(this.props.phaseswitch){
       if(this.props.rowid < 8){
         this.setState({peace: true, phase: 1});
@@ -46,15 +43,14 @@ class SingleFlowComponent extends React.Component {
         this.setState({peace: true, phase: 3, row: this.props.rowid-8});
       }
     }else{
-      if(this.state.row <8){
-        this.setState({peace: false, phase: 1});
-      }else if(this.state.row <16){
+      if(this.props.rowid < 8){
         this.setState({peace: true, phase: 2});
-      }else if(this.state.row >=16){
-        this.setState({peace: true, phase: 3, row: this.props.rowid-16});
+      }else if(this.props.rowid < 16){
+        this.setState({peace: false, phase: 1});
+      }else{
+        this.setState({peace: true, phase: 3, row: this.props.rowid-8});
       }
     }
-
   }
 
   tutorialInit = () =>{
@@ -92,13 +88,24 @@ class SingleFlowComponent extends React.Component {
   }
 
   generateRoute = () => {
-    if(this.props.rowid === 7){
-      return("phase2");
-    }else if(this.props.rowid === 15){
-      return("phase3");
+    if(this.props.phaseswitch){
+      if(this.props.rowid === 7){
+        return("phase2");
+      }else if(this.props.rowid === 15){
+        return("phase3");
+      }else{
+        return("/flow"+this.state.next);
+      }
     }else{
-      return("/flow"+this.state.next);
+      if(this.props.rowid === 7){
+        return("phase3");
+      }else if(this.props.rowid === 15){
+        return("phase2");
+      }else{
+        return("/flow"+this.state.next);
+      }
     }
+
   }
 
   next = () => {
@@ -282,6 +289,20 @@ class SingleFlowComponent extends React.Component {
     this.props.logs.push((new Date()).getTime() +": Starting");
   }
 
+  startStudy = () =>{
+    if(this.props.tutorial){
+      if(this.state.tutorialStep === 4){
+        if(this.props.phaseswitch){
+          return(<Link to="/flow0"><Button className="tutorial-next-button" variant="contained" onClick={this.start}>Start Study</Button></Link>);
+        }else{
+          return(<Link to="/flow8"><Button className="tutorial-next-button" variant="contained" onClick={this.start}>Start Study</Button></Link>);
+        }
+      }else{
+        return(<Button className="tutorial-next-button" variant="contained" onClick={this.tutorialNext}>Next Step</Button>)
+      }
+    }
+  }
+
   render(){
     if(this.props.rowid > 23){
       return(
@@ -295,7 +316,6 @@ class SingleFlowComponent extends React.Component {
         <div className="page-contents">
           <div className="page-sub-title-div">
             {!this.props.tutorial && <h2 className="page-sub-title">Flow Data Phase {this.state.phase}</h2>}
-            {!this.props.tutorial && <p>Remember to vocalize your thoughts and decisions</p>}
           </div>
           <div className={(this.props.tutorial && (this.state.tutorialStep !==1)) ? "flow-detail-pane step-1 blurred" : "flow-detail-pane step-1"}>
             {!this.props.tutorial && <h4>Flow Details</h4>}
@@ -338,7 +358,7 @@ class SingleFlowComponent extends React.Component {
             {this.continueGen()}
           </div>
         </div>
-        {this.props.tutorial && ((this.state.tutorialStep === 4) ? <Link to="/flow0"><Button className="tutorial-next-button" variant="contained" onClick={this.start}>Start Study</Button></Link> : <Button className="tutorial-next-button" variant="contained" onClick={this.tutorialNext}>Next Step</Button>)}
+        {this.startStudy()}
       </PageWrapper>
     )
   }

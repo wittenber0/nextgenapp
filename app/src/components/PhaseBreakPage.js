@@ -11,15 +11,24 @@ class PhaseBreakPage extends React.Component{
 
   render(){
     let row;
-    if(this.props.phase === 3){
-      row = 16
+    if(this.props.phaseswitch){
+      if(this.props.phase === 3){
+        row = 16
+      }else{
+        row = 8
+      }
     }else{
-      row = 8
+      if(this.props.phase === 3){
+        row = 16
+      }else{
+        row =0;
+      }
     }
+
     return(
       <PageWrapper>
         <h2>Take a quick break!</h2>
-        <p>You have finished phase {this.props.phase} of the study, press next to continue</p>
+        <p>You have finished phase {this.props.phase-1} of the study, press next to continue</p>
         <Link to={"/flow"+row}><Button variant="contained" onClick={this.start}>Next</Button></Link>
       </PageWrapper>
     )
