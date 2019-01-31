@@ -116,6 +116,7 @@ class SingleFlowComponent extends React.Component {
         next: this.state.next +1,
         reason: "",
         blocked: null
+        indicators: "";
       }, ()=>{
         this.refreshIndicators("indicator-button");
         this.refreshIndicators("blocker");
